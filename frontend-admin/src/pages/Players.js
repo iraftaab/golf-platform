@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { playerApi } from '../services/api';
 
 export default function Players() {
@@ -51,7 +52,7 @@ export default function Players() {
           {players.map(p => (
             <tr key={p.id}>
               <td>{p.id}</td>
-              <td>{p.firstName} {p.lastName}</td>
+              <td><Link to={`/players/${p.id}`}>{p.firstName} {p.lastName}</Link></td>
               <td>{p.email}</td>
               <td>{p.handicapIndex ?? '—'}</td>
               <td><button onClick={() => handleDelete(p.id)}>Delete</button></td>

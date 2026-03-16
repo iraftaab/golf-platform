@@ -23,6 +23,7 @@ export default function Navbar() {
       <NavLink to="/players" style={linkStyle}>Players</NavLink>
       <NavLink to="/courses" style={linkStyle}>Courses</NavLink>
       <NavLink to="/bookings" style={linkStyle}>Bookings</NavLink>
+      <NavLink to="/rounds" style={linkStyle}>Rounds</NavLink>
     </nav>
   );
 }

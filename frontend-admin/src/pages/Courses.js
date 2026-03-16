@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { courseApi } from '../services/api';
 
 export default function Courses() {
@@ -54,7 +55,7 @@ export default function Courses() {
           {courses.map(c => (
             <tr key={c.id}>
               <td>{c.id}</td>
-              <td>{c.name}</td>
+              <td><Link to={`/courses/${c.id}`}>{c.name}</Link></td>
               <td>{c.location}</td>
               <td>{c.numberOfHoles}</td>
               <td>{c.courseRating ?? '—'}</td>
