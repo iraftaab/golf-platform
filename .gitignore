@@ -1,0 +1,33 @@
+# Maven
+backend/target/
+*.class
+
+# Node
+frontend-admin/node_modules/
+frontend-admin/build/
+
+# Python
+ai-engine/__pycache__/
+ai-engine/*.pyc
+ai-engine/.venv/
+
+# Flutter
+mobile-app/.dart_tool/
+mobile-app/build/
+mobile-app/.flutter-plugins
+mobile-app/.flutter-plugins-dependencies
+
+# IDE
+.settings/
+.classpath
+.factorypath
+.project
+*.iml
+.idea/
+
+# Env
+.env
+*.env
+
+# Claude
+.claude/

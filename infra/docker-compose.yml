@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: golfplatform
+      POSTGRES_USER: golf
+      POSTGRES_PASSWORD: golf_secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U golf -d golfplatform"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../infra/docker/Dockerfile.backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/golfplatform
+      SPRING_DATASOURCE_USERNAME: golf
+      SPRING_DATASOURCE_PASSWORD: golf_secret
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ai-engine:
+    build:
+      context: ../ai-engine
+      dockerfile: ../infra/docker/Dockerfile.ai-engine
+    ports:
+      - "8081:8081"
+
+  frontend-admin:
+    build:
+      context: ../frontend-admin
+      dockerfile: ../infra/docker/Dockerfile.frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
