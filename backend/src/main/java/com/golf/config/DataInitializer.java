@@ -71,6 +71,7 @@ public class DataInitializer implements ApplicationRunner {
         Course tpc       = courseRepository.save(makeCourse("TPC Sawgrass",            "Ponte Vedra Beach, FL",75.5, 135));
         Course whistling = courseRepository.save(makeCourse("Whistling Straits",       "Haven, WI",            76.9, 151));
         Course bethpage  = courseRepository.save(makeCourse("Bethpage Black",          "Farmingdale, NY",      78.1, 155));
+        Course heritage  = courseRepository.save(makeCourse("Heritage Isle Golf and Country Club", "Tampa, FL", 71.2, 128));
 
         Player tiger = players.get(0), rory = players.get(1), phil = players.get(2),
                jordan = players.get(3), dustin = players.get(4), brooks = players.get(5),

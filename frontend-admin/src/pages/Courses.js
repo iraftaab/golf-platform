@@ -10,6 +10,7 @@ const COURSE_IMAGES = {
   'TPC Sawgrass':            'https://images.unsplash.com/photo-1591491634026-def1e88b9c98?w=800&q=80',
   'Whistling Straits':       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
   'Bethpage Black':          'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80',
+  'Heritage Isle Golf and Country Club': 'https://images.unsplash.com/photo-1591491634026-def1e88b9c98?w=800&q=80',
 };
 const FALLBACK = 'https://images.unsplash.com/photo-1587174486073-ae5a5cff23aa?w=800&q=80';
 
