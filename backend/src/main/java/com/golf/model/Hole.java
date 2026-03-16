@@ -1,5 +1,6 @@
 package com.golf.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class Hole {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "course_id", nullable = false)
+    @JsonIgnoreProperties("holes")
     private Course course;
 
     @Min(1) @Max(18)
