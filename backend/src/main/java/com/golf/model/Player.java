@@ -35,6 +35,13 @@ public class Player {
     /** Official handicap index (null if not established) */
     private Double handicapIndex;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MembershipTier membershipTier = MembershipTier.BRONZE;
+
+    /** Hashed PIN for member portal login (4-digit, stored as BCrypt) */
+    private String memberPin;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 

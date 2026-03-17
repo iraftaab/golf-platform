@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -25,6 +25,7 @@ public class DataInitializer implements ApplicationRunner {
     private final BookingRepository bookingRepository;
     private final RoundRepository roundRepository;
     private final HoleRepository holeRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -35,18 +36,22 @@ public class DataInitializer implements ApplicationRunner {
 
         log.info("Seeding sample data...");
 
-        // --- Players ---
+        String pin1234 = passwordEncoder.encode("1234");
+        String pin5678 = passwordEncoder.encode("5678");
+        String pin9999 = passwordEncoder.encode("9999");
+
+        // --- Players (tier: GOLD=top 4, SILVER=mid 3, BRONZE=rest) ---
         List<Player> players = playerRepository.saveAll(List.of(
-            player("Tiger",   "Woods",    "tiger@golf.com",   0.0),
-            player("Rory",    "McIlroy",  "rory@golf.com",    0.1),
-            player("Phil",    "Mickelson","phil@golf.com",     0.3),
-            player("Jordan",  "Spieth",   "jordan@golf.com",  0.2),
-            player("Dustin",  "Johnson",  "dustin@golf.com",  0.4),
-            player("Brooks",  "Koepka",   "brooks@golf.com",  0.1),
-            player("Jon",     "Rahm",     "jon@golf.com",     0.0),
-            player("Justin",  "Thomas",   "jt@golf.com",      0.2),
-            player("Collin",  "Morikawa", "collin@golf.com",  0.1),
-            player("Scottie", "Scheffler","scottie@golf.com", 0.0)
+            player("Tiger",   "Woods",    "tiger@golf.com",   0.0,  MembershipTier.GOLD,   pin1234),
+            player("Rory",    "McIlroy",  "rory@golf.com",    0.1,  MembershipTier.GOLD,   pin1234),
+            player("Phil",    "Mickelson","phil@golf.com",    0.3,  MembershipTier.GOLD,   pin5678),
+            player("Jordan",  "Spieth",   "jordan@golf.com",  0.2,  MembershipTier.GOLD,   pin5678),
+            player("Dustin",  "Johnson",  "dustin@golf.com",  0.4,  MembershipTier.SILVER, pin5678),
+            player("Brooks",  "Koepka",   "brooks@golf.com",  0.1,  MembershipTier.SILVER, pin9999),
+            player("Jon",     "Rahm",     "jon@golf.com",     0.0,  MembershipTier.SILVER, pin9999),
+            player("Justin",  "Thomas",   "jt@golf.com",      0.2,  MembershipTier.BRONZE, pin9999),
+            player("Collin",  "Morikawa", "collin@golf.com",  0.1,  MembershipTier.BRONZE, pin1234),
+            player("Scottie", "Scheffler","scottie@golf.com", 0.0,  MembershipTier.BRONZE, pin1234)
         ));
 
         // --- Courses ---
@@ -168,10 +173,12 @@ public class DataInitializer implements ApplicationRunner {
         return r;
     }
 
-    private Player player(String first, String last, String email, double handicap) {
+    private Player player(String first, String last, String email, double handicap,
+                          MembershipTier tier, String hashedPin) {
         Player p = new Player();
         p.setFirstName(first); p.setLastName(last);
         p.setEmail(email); p.setHandicapIndex(handicap);
+        p.setMembershipTier(tier); p.setMemberPin(hashedPin);
         return p;
     }
 

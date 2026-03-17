@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Players from './pages/Players';
@@ -9,12 +9,20 @@ import CourseDetail from './pages/CourseDetail';
 import Bookings from './pages/Bookings';
 import Rounds from './pages/Rounds';
 import RoundDetail from './pages/RoundDetail';
+import { MemberProvider } from './member/MemberContext';
+import MemberLogin from './member/MemberLogin';
+import MemberHome from './member/MemberHome';
+import MemberBook from './member/MemberBook';
+import MemberBookings from './member/MemberBookings';
+import MemberRounds from './member/MemberRounds';
 
-export default function App() {
+function AppLayout() {
+  const loc = useLocation();
+  const isMember = loc.pathname.startsWith('/member');
   return (
-    <BrowserRouter>
-      <Navbar />
-      <main style={{ padding: '1rem' }}>
+    <>
+      {!isMember && <Navbar />}
+      <main style={isMember ? {} : { padding: '1rem' }}>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -25,8 +33,25 @@ export default function App() {
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/rounds" element={<Rounds />} />
           <Route path="/rounds/:id" element={<RoundDetail />} />
+          {/* Member portal */}
+          <Route path="/member/login" element={<MemberLogin />} />
+          <Route path="/member/home" element={<MemberHome />} />
+          <Route path="/member/book" element={<MemberBook />} />
+          <Route path="/member/bookings" element={<MemberBookings />} />
+          <Route path="/member/rounds" element={<MemberRounds />} />
+          <Route path="/member" element={<Navigate to="/member/login" replace />} />
         </Routes>
       </main>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <MemberProvider>
+        <AppLayout />
+      </MemberProvider>
     </BrowserRouter>
   );
 }
