@@ -47,8 +47,8 @@ export default function MemberBookings() {
 
   useEffect(() => {
     if (!member) { navigate('/member/login'); return; }
-    bookingApi.getAll()
-      .then(all => setBookings(all.filter(b => b.player?.id === member.id)))
+    bookingApi.getByPlayer(member.id)
+      .then(all => setBookings(all))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [member]);
