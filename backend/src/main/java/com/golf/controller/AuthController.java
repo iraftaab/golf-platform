@@ -53,4 +53,29 @@ public class AuthController {
         resp.put("guestPrivileges",player.getMembershipTier().guestPrivileges);
         return ResponseEntity.ok(resp);
     }
+
+    @PatchMapping("/pin")
+    public ResponseEntity<?> changePin(@RequestBody Map<String, String> body) {
+        String email      = body.get("email");
+        String currentPin = body.get("currentPin");
+        String newPin     = body.get("newPin");
+
+        if (email == null || currentPin == null || newPin == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "email, currentPin and newPin are required"));
+        }
+        if (!newPin.matches("\\d{4}")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "New PIN must be 4 digits"));
+        }
+
+        Player player = playerRepository.findByEmail(email.trim().toLowerCase()).orElse(null);
+        if (player == null || player.getMemberPin() == null
+                || !passwordEncoder.matches(currentPin, player.getMemberPin())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Current PIN is incorrect"));
+        }
+
+        player.setMemberPin(passwordEncoder.encode(newPin));
+        playerRepository.save(player);
+        return ResponseEntity.ok(Map.of("message", "PIN updated successfully"));
+    }
 }

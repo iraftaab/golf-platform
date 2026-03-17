@@ -15,6 +15,7 @@ import MemberHome from './member/MemberHome';
 import MemberBook from './member/MemberBook';
 import MemberBookings from './member/MemberBookings';
 import MemberRounds from './member/MemberRounds';
+import MemberProfile from './member/MemberProfile';
 
 function AppLayout() {
   const loc = useLocation();
@@ -39,6 +40,7 @@ function AppLayout() {
           <Route path="/member/book" element={<MemberBook />} />
           <Route path="/member/bookings" element={<MemberBookings />} />
           <Route path="/member/rounds" element={<MemberRounds />} />
+          <Route path="/member/profile" element={<MemberProfile />} />
           <Route path="/member" element={<Navigate to="/member/login" replace />} />
         </Routes>
       </main>
