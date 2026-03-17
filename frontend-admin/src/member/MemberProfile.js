@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useMember } from './MemberContext';
+import MemberAvatar from './MemberAvatar';
 
 const TIER_STYLES = {
   GOLD:   { bg: 'linear-gradient(135deg,#f6d365,#fda085)', text: '#7c4a00', icon: '🥇' },
@@ -47,6 +48,22 @@ const css = `
   .pin-section { margin-top:.25rem; }
   .pin-hint { font-size:.78rem; color:#888; margin:.35rem 0 0; }
 
+  .avatar-section {
+    display:flex; flex-direction:column; align-items:center; gap:.75rem;
+    padding:1.5rem; border-bottom:1.5px solid #f0f0f0; margin-bottom:1.5rem;
+  }
+  .avatar-wrap { position:relative; cursor:pointer; }
+  .avatar-overlay {
+    position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,.45);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; transition:opacity .2s; color:#fff; font-size:.72rem; font-weight:700;
+    text-align:center; line-height:1.3;
+  }
+  .avatar-wrap:hover .avatar-overlay { opacity:1; }
+  .avatar-name { font-weight:800; font-size:1.1rem; color:#1a1a1a; }
+  .avatar-email { font-size:.82rem; color:#888; }
+  .avatar-upload-hint { font-size:.75rem; color:#aaa; }
+
   .btn-save {
     width:100%; padding:.85rem; background:#1a5c2a; color:#fff; border:none;
     border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer;
@@ -78,10 +95,39 @@ export default function MemberProfile() {
   const [confirmPin, setConfirmPin] = useState('');
 
   const [loading, setLoading]       = useState(false);
+  const [picLoading, setPicLoading] = useState(false);
   const [error, setError]           = useState('');
   const [success, setSuccess]       = useState('');
+  const fileInputRef                = useRef();
 
   if (!member) { navigate('/member/login'); return null; }
+
+  const handlePictureChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPicLoading(true); setError(''); setSuccess('');
+    const form = new FormData();
+    form.append('file', file);
+    try {
+      await axios.post(`/api/players/${member.id}/picture`, form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      // Refresh session to get new profilePicture URL
+      const refreshed = await axios.post('/api/auth/login', {
+        email: member.email, pin: currentPin || '__skip__',
+      }).catch(() => null);
+      // If we can't re-login (no pin entered), just reload the picture by updating member manually
+      if (refreshed) {
+        login(refreshed.data);
+      } else {
+        const updated = await axios.get(`/api/players/${member.id}`).then(r => r.data);
+        login({ ...member, profilePicture: updated.profilePicture });
+      }
+      setSuccess('Profile picture updated!');
+    } catch {
+      setError('Failed to upload picture. Max 5 MB, images only.');
+    } finally { setPicLoading(false); }
+  };
 
   const ts = TIER_STYLES[member.membershipTier] || TIER_STYLES.BRONZE;
 
@@ -152,6 +198,22 @@ export default function MemberProfile() {
         </div>
 
         <div className="prof-card">
+          {/* Avatar upload */}
+          <div className="avatar-section">
+            <div className="avatar-wrap" onClick={() => fileInputRef.current.click()}
+                 title="Click to change picture">
+              <MemberAvatar member={member} size={96} />
+              <div className="avatar-overlay">
+                {picLoading ? '…' : '📷 Change'}
+              </div>
+            </div>
+            <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }}
+              onChange={handlePictureChange} />
+            <div className="avatar-name">{member.firstName} {member.lastName}</div>
+            <div className="avatar-email">{member.email}</div>
+            <div className="avatar-upload-hint">Click photo to upload a new picture (max 5 MB)</div>
+          </div>
+
           {success && <div className="success-toast">✓ {success}</div>}
           {error   && <div className="error-msg">{error}</div>}
 

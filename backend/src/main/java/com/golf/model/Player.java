@@ -42,6 +42,9 @@ public class Player {
     /** Hashed PIN for member portal login (4-digit, stored as BCrypt) */
     private String memberPin;
 
+    /** Relative URL to the member's profile picture, e.g. /uploads/players/1.jpg */
+    private String profilePicture;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 

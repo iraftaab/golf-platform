@@ -51,6 +51,7 @@ public class AuthController {
         resp.put("maxBookingsPerWeek", player.getMembershipTier().maxBookingsPerWeek == Integer.MAX_VALUE
                                     ? "Unlimited" : player.getMembershipTier().maxBookingsPerWeek);
         resp.put("guestPrivileges",player.getMembershipTier().guestPrivileges);
+        resp.put("profilePicture", player.getProfilePicture() != null ? player.getProfilePicture() : "");
         return ResponseEntity.ok(resp);
     }
 

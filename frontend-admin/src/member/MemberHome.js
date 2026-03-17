@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMember } from './MemberContext';
+import MemberAvatar from './MemberAvatar';
 
 const TIER_STYLES = {
   GOLD:   { bg: 'linear-gradient(135deg,#f6d365 0%,#fda085 100%)', text: '#7c4a00', icon: '🥇', border: '#f59e0b' },
@@ -91,6 +92,9 @@ export default function MemberHome() {
         <div className="member-nav-brand">⛳ Golf Platform</div>
         <div className="member-nav-right">
           <span className="nav-greeting">Welcome, {member.firstName}!</span>
+          <Link to="/member/profile" style={{ lineHeight: 0 }}>
+            <MemberAvatar member={member} size={36} style={{ border: '2px solid rgba(255,255,255,.6)', cursor: 'pointer' }} />
+          </Link>
           <button className="btn-logout" onClick={() => { logout(); navigate('/member/login'); }}>Sign Out</button>
         </div>
       </nav>
