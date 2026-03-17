@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { playerApi } from '../services/api';
+import AdminAvatar from '../components/AdminAvatar';
 
 export default function Players() {
   const [players, setPlayers] = useState([]);
@@ -46,14 +47,26 @@ export default function Players() {
 
       <table border="1" cellPadding="6" style={{ borderCollapse: 'collapse' }}>
         <thead>
-          <tr><th>ID</th><th>Name</th><th>Email</th><th>Handicap</th><th></th></tr>
+          <tr>
+            <th style={{ width: 48 }}></th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Tier</th>
+            <th>Handicap</th>
+            <th></th>
+          </tr>
         </thead>
         <tbody>
           {players.map(p => (
             <tr key={p.id}>
+              <td style={{ textAlign: 'center', padding: '4px 8px' }}>
+                <AdminAvatar player={p} size={36} />
+              </td>
               <td>{p.id}</td>
               <td><Link to={`/players/${p.id}`}>{p.firstName} {p.lastName}</Link></td>
               <td>{p.email}</td>
+              <td>{p.membershipTier || '—'}</td>
               <td>{p.handicapIndex ?? '—'}</td>
               <td><button onClick={() => handleDelete(p.id)}>Delete</button></td>
             </tr>

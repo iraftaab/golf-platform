@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { playerApi, roundApi, bookingApi } from '../services/api';
+import AdminAvatar from '../components/AdminAvatar';
+
+const TIER_COLORS = {
+  GOLD:   { bg: '#fef3c7', text: '#92400e', border: '#f59e0b' },
+  SILVER: { bg: '#f3f4f6', text: '#374151', border: '#9ca3af' },
+  BRONZE: { bg: '#fdf3e3', text: '#7c2d12', border: '#b45309' },
+};
 
 export default function PlayerDetail() {
   const { id } = useParams();
@@ -9,8 +16,10 @@ export default function PlayerDetail() {
   const [bookings, setBookings] = useState([]);
   const [tab, setTab] = useState('rounds');
 
+  const loadPlayer = () => playerApi.getById(id).then(setPlayer).catch(console.error);
+
   useEffect(() => {
-    playerApi.getById(id).then(setPlayer).catch(console.error);
+    loadPlayer();
     roundApi.getByPlayer(id).then(setRounds).catch(console.error);
     bookingApi.getByPlayer(id).then(setBookings).catch(console.error);
   }, [id]);
@@ -23,15 +32,15 @@ export default function PlayerDetail() {
     : null;
   const best = completedRounds.length ? Math.min(...completedRounds.map(r => r.totalScore)) : null;
 
+  const tc = TIER_COLORS[player.membershipTier] || TIER_COLORS.BRONZE;
+
   const tabBtn = (name, label) => (
-    <button
-      onClick={() => setTab(name)}
-      style={{
-        padding: '0.4rem 1rem', marginRight: '0.5rem', cursor: 'pointer',
-        background: tab === name ? '#1a5c2a' : '#eee',
-        color: tab === name ? '#fff' : '#333',
-        border: 'none', borderRadius: 4,
-      }}>
+    <button onClick={() => setTab(name)} style={{
+      padding: '0.4rem 1rem', marginRight: '0.5rem', cursor: 'pointer',
+      background: tab === name ? '#1a5c2a' : '#eee',
+      color: tab === name ? '#fff' : '#333',
+      border: 'none', borderRadius: 4,
+    }}>
       {label}
     </button>
   );
@@ -39,7 +48,31 @@ export default function PlayerDetail() {
   return (
     <div>
       <Link to="/players">← Back to Players</Link>
-      <h1>{player.firstName} {player.lastName}</h1>
+
+      {/* Player header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', margin: '1.25rem 0 1.5rem',
+                    background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, padding: '1.25rem' }}>
+        <AdminAvatar
+          player={player}
+          size={88}
+          editable
+          onUpdate={() => loadPlayer()}
+        />
+        <div style={{ flex: 1 }}>
+          <h1 style={{ margin: '0 0 .2rem', fontSize: '1.6rem' }}>{player.firstName} {player.lastName}</h1>
+          <div style={{ color: '#666', fontSize: '.9rem', marginBottom: '.6rem' }}>{player.email}{player.phone ? ` · ${player.phone}` : ''}</div>
+          <span style={{
+            display: 'inline-block', padding: '.25rem .75rem', borderRadius: 20,
+            fontSize: '.8rem', fontWeight: 700,
+            background: tc.bg, color: tc.text, border: `1px solid ${tc.border}`,
+          }}>
+            {player.membershipTier || 'No tier'}
+          </span>
+        </div>
+        <div style={{ fontSize: '.8rem', color: '#999', textAlign: 'right' }}>
+          Click photo to upload
+        </div>
+      </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <StatCard label="Handicap" value={player.handicapIndex ?? '—'} />
