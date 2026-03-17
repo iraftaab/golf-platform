@@ -45,6 +45,8 @@ function AppLayout() {
           <Route path="/member/bookings" element={<MemberBookings />} />
           <Route path="/member/rounds" element={<MemberRounds />} />
           <Route path="/member/profile" element={<MemberProfile />} />
+          <Route path="/member/coaches" element={<Coaches />} />
+          <Route path="/member/coaches/:id" element={<CoachDetail />} />
           <Route path="/member" element={<Navigate to="/member/login" replace />} />
         </Routes>
       </main>

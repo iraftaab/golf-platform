@@ -139,7 +139,12 @@ export default function MemberHome() {
             <p className="action-title">Browse Courses</p>
             <p className="action-sub">Explore available courses</p>
           </Link>
-          <Link to="/member/profile" className="action-card" style={{ animationDelay: '.25s' }}>
+          <Link to="/member/coaches" className="action-card" style={{ animationDelay: '.25s' }}>
+            <div className="action-icon">🏫</div>
+            <p className="action-title">Book a Coach</p>
+            <p className="action-sub">Private lessons & clinics</p>
+          </Link>
+          <Link to="/member/profile" className="action-card" style={{ animationDelay: '.3s' }}>
             <div className="action-icon">⚙️</div>
             <p className="action-title">My Profile</p>
             <p className="action-sub">Update info & change PIN</p>

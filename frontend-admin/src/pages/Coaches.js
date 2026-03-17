@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const css = `
@@ -55,6 +55,9 @@ const css = `
 
 export default function Coaches() {
   const [coaches, setCoaches] = useState([]);
+  const { pathname } = useLocation();
+  const isMember = pathname.startsWith('/member');
+  const coachRoot = isMember ? '/member/coaches' : '/coaches';
 
   useEffect(() => {
     axios.get('/api/coaches').then(r => setCoaches(r.data)).catch(console.error);
@@ -64,6 +67,12 @@ export default function Coaches() {
     <div className="coaches-wrap">
       <style>{css}</style>
       <div className="coaches-hero">
+        {isMember && (
+          <Link to="/member/home" style={{ color: 'rgba(255,255,255,.75)', textDecoration: 'none',
+            fontWeight: 600, fontSize: '.9rem', display: 'block', marginBottom: '.75rem' }}>
+            ← Member Home
+          </Link>
+        )}
         <h1>🏌️ Golf Coaches</h1>
         <p>Book a private lesson with one of our certified PGA instructors</p>
       </div>
@@ -85,7 +94,7 @@ export default function Coaches() {
                 <span className="price-chip">30 min · ${c.price30min}</span>
                 <span className="price-chip">60 min · ${c.price60min}</span>
               </div>
-              <Link to={`/coaches/${c.id}`} className="btn-book-coach">Book</Link>
+              <Link to={`${coachRoot}/${c.id}`} className="btn-book-coach">Book</Link>
             </div>
           </div>
         ))}

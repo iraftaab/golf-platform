@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const css = `
@@ -76,6 +76,9 @@ const css = `
 
 export default function CoachDetail() {
   const { id } = useParams();
+  const { pathname } = useLocation();
+  const isMember = pathname.startsWith('/member');
+  const coachesRoot = isMember ? '/member/coaches' : '/coaches';
   const [coach, setCoach] = useState(null);
   const [duration, setDuration] = useState(60);
   const [form, setForm] = useState({ clientName: '', clientEmail: '', clientPhone: '', sessionDate: '', sessionTime: '', notes: '' });
@@ -113,7 +116,7 @@ export default function CoachDetail() {
       <div className="cd-wrap">
         <style>{css}</style>
         <div className="cd-hero">
-          <Link to="/coaches" className="cd-back" style={{ width: '100%' }}>← All Coaches</Link>
+          <Link to={coachesRoot} className="cd-back" style={{ width: '100%' }}>← All Coaches</Link>
         </div>
         <div style={{ maxWidth: 480, margin: '2.5rem auto', padding: '0 1.25rem' }}>
           <div className="cd-card">
@@ -142,7 +145,7 @@ export default function CoachDetail() {
       <style>{css}</style>
 
       <div className="cd-hero">
-        <Link to="/coaches" className="cd-back" style={{ width: '100%', marginBottom: '.5rem' }}>← All Coaches</Link>
+        <Link to={coachesRoot} className="cd-back" style={{ width: '100%', marginBottom: '.5rem' }}>← All Coaches</Link>
         {coach.photoUrl
           ? <img src={coach.photoUrl} alt={coach.name} className="cd-hero-img" />
           : <div className="cd-hero-placeholder">🏌️</div>
