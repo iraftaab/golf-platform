@@ -15,7 +15,6 @@ const COURSE_IMAGES = {
 };
 const FALLBACK_HERO = 'https://images.unsplash.com/photo-1587174486073-ae5a5cff23aa?w=1400&q=90';
 
-// A curated pool of golf hole photos from Unsplash
 const HOLE_PHOTOS = [
   'https://images.unsplash.com/photo-1587174486073-ae5a5cff23aa?w=600&q=80',
   'https://images.unsplash.com/photo-1535132073-65e3498ece64?w=600&q=80',
@@ -37,96 +36,148 @@ const HOLE_PHOTOS = [
   'https://images.unsplash.com/photo-1612118875019-1e4b2fca27cd?w=600&q=80',
 ];
 
-const PAR_COLOR = { 3: { bg: '#e3f2fd', text: '#1565c0', label: 'Par 3' }, 4: { bg: '#e8f5e9', text: '#2e7d32', label: 'Par 4' }, 5: { bg: '#fff8e1', text: '#e65100', label: 'Par 5' } };
+const PAR_COLOR = {
+  3: { bg: 'rgba(59,130,246,.18)', text: '#93c5fd', border: 'rgba(59,130,246,.3)', label: 'Par 3' },
+  4: { bg: 'rgba(201,168,76,.15)', text: '#e8c96e', border: 'rgba(201,168,76,.3)',  label: 'Par 4' },
+  5: { bg: 'rgba(34,197,94,.15)',  text: '#86efac', border: 'rgba(34,197,94,.3)',   label: 'Par 5' },
+};
 
 const css = `
-  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes shimmer  { 0%,100%{opacity:.5} 50%{opacity:1} }
 
-  .hero { position:relative; height:440px; border-radius:20px; overflow:hidden; margin-bottom:2rem; animation:fadeIn .5s ease; }
-  .hero img { width:100%; height:100%; object-fit:cover; display:block; }
-  .hero-overlay {
+  .cd-page { background:#080808; min-height:100vh; }
+
+  /* ── Hero ── */
+  .cd-hero {
+    position:relative; height:480px; overflow:hidden;
+    border-bottom:1px solid rgba(201,168,76,.15);
+  }
+  .cd-hero-img { width:100%; height:100%; object-fit:cover; display:block; filter:brightness(.55); transition:transform 8s ease; }
+  .cd-hero:hover .cd-hero-img { transform:scale(1.04); }
+  .cd-hero-overlay {
     position:absolute; inset:0;
-    background:linear-gradient(to bottom, rgba(0,0,0,.05) 0%, rgba(0,0,0,.72) 100%);
-    display:flex; flex-direction:column; justify-content:flex-end; padding:2.5rem 2rem;
+    background:linear-gradient(to bottom, rgba(0,0,0,.1) 0%, rgba(0,0,0,.75) 100%);
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:2.5rem 2.5rem 2.5rem; max-width:1140px; margin:0 auto;
   }
-  .hero-title { color:#fff; font-size:2.8rem; font-weight:800; margin:0 0 .4rem; text-shadow:0 2px 10px rgba(0,0,0,.5); }
-  .hero-sub { color:rgba(255,255,255,.82); font-size:1.05rem; margin:0; }
+  .cd-hero-inner { max-width:1140px; margin:0 auto; width:100%; }
+  .cd-back { display:inline-flex; align-items:center; gap:.35rem; color:rgba(240,236,228,.6); text-decoration:none; font-size:.8rem; font-weight:600; margin-bottom:1.5rem; transition:color .2s; letter-spacing:.04em; text-transform:uppercase; }
+  .cd-back:hover { color:#c9a84c; }
+  .cd-eyebrow { font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#c9a84c; margin-bottom:.5rem; }
+  .cd-hero-title { color:#f0ece4; font-size:2.8rem; font-weight:800; margin:0 0 .4rem; letter-spacing:-.02em; text-shadow:0 2px 14px rgba(0,0,0,.6); }
+  .cd-hero-loc { color:rgba(201,168,76,.9); font-size:1rem; margin:0; font-weight:600; }
 
-  .stat-strip { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2rem; }
-  .stat-box {
-    flex:1; min-width:110px; background:#fff; border:1px solid #eaeaea; border-radius:12px;
-    padding:1rem 1.2rem; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.06);
-    animation:fadeUp .4s ease both;
+  /* ── Stat strip ── */
+  .cd-stats { max-width:1140px; margin:-2px auto 0; padding:0 1.5rem; display:flex; gap:1px; background:rgba(201,168,76,.12); border-bottom:1px solid rgba(201,168,76,.12); }
+  .cd-stat {
+    flex:1; padding:1.1rem 1rem; text-align:center; background:#0d0d0d;
+    transition:background .2s;
   }
-  .stat-val { font-size:1.75rem; font-weight:800; color:#1a5c2a; margin:0; }
-  .stat-lbl { font-size:.78rem; color:#888; margin:.2rem 0 0; text-transform:uppercase; letter-spacing:.04em; }
+  .cd-stat:hover { background:#111; }
+  .cd-stat-val { font-size:1.5rem; font-weight:800; color:#c9a84c; margin:0; letter-spacing:-.01em; }
+  .cd-stat-lbl { font-size:.68rem; color:#6a6058; margin:.15rem 0 0; text-transform:uppercase; letter-spacing:.08em; }
 
-  .section-title {
-    font-size:1.5rem; font-weight:700; color:#1a1a1a; margin:2rem 0 1rem;
-    display:flex; align-items:center; gap:.6rem;
-  }
-  .section-title::after { content:''; flex:1; height:2px; background:#e8f5e9; border-radius:2px; }
+  /* ── Body ── */
+  .cd-body { max-width:1140px; margin:0 auto; padding:2rem 1.5rem 4rem; }
 
-  .hole-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.25rem; margin-bottom:2.5rem; }
-  .hole-card {
-    border-radius:14px; overflow:hidden; box-shadow:0 3px 14px rgba(0,0,0,.12);
-    background:#fff; animation:fadeUp .35s ease both;
-    transition:transform .22s ease, box-shadow .22s ease;
+  /* ── Section header ── */
+  .cd-section-head {
+    display:flex; align-items:center; justify-content:space-between;
+    margin:2.5rem 0 1.25rem;
   }
-  .hole-card:hover { transform:translateY(-5px); box-shadow:0 10px 28px rgba(0,0,0,.18); }
-  .hole-card-img { position:relative; height:160px; overflow:hidden; }
-  .hole-card-img img { width:100%; height:100%; object-fit:cover; transition:transform .4s ease; }
-  .hole-card:hover .hole-card-img img { transform:scale(1.07); }
-  .hole-num-badge {
-    position:absolute; top:10px; left:10px; background:rgba(0,0,0,.65);
-    backdrop-filter:blur(4px); color:#fff; font-weight:800; font-size:1.1rem;
-    width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    border:2px solid rgba(255,255,255,.4);
+  .cd-section-title {
+    font-size:1.1rem; font-weight:800; color:#f0ece4; letter-spacing:-.01em;
+    display:flex; align-items:center; gap:.55rem;
   }
-  .par-tag {
-    position:absolute; top:10px; right:10px; padding:.25rem .65rem;
-    border-radius:20px; font-size:.78rem; font-weight:700;
-  }
-  .hole-card-body { padding:.85rem 1rem 1rem; }
-  .hole-stat-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem; }
-  .hole-stat { text-align:center; }
-  .hole-stat-val { font-size:1.1rem; font-weight:700; color:#1a1a1a; }
-  .hole-stat-lbl { font-size:.72rem; color:#999; }
-  .si-track { height:6px; background:#e8e8e8; border-radius:3px; overflow:hidden; margin-top:.5rem; }
-  .si-fill { height:100%; background:linear-gradient(90deg,#1a5c2a,#4caf50); border-radius:3px; transition:width .6s ease; }
-  .si-label { font-size:.72rem; color:#888; margin-top:.2rem; }
+  .cd-section-title::before { content:''; display:block; width:3px; height:1.1em; background:#c9a84c; border-radius:2px; }
 
-  .scorecard-wrap { overflow-x:auto; margin-bottom:2rem; }
-  .scorecard { width:100%; border-collapse:collapse; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.08); min-width:560px; }
-  .scorecard th { background:#1a5c2a; color:#fff; padding:.65rem .9rem; font-size:.8rem; text-align:center; text-transform:uppercase; letter-spacing:.05em; }
-  .scorecard td { padding:.6rem .9rem; border-bottom:1px solid #f0f0f0; text-align:center; font-size:.88rem; }
-  .scorecard tr:nth-child(even) td { background:#fafafa; }
-  .scorecard tr:hover td { background:#f0f7f2; }
-  .scorecard tfoot td { background:#1a5c2a; color:#fff; font-weight:700; }
-  .scorecard .divider td { background:#e8f5e9; font-weight:700; color:#1a5c2a; }
+  /* ── View toggle ── */
+  .cd-toggle { display:flex; gap:.4rem; }
+  .cd-toggle-btn {
+    padding:.38rem 1rem; border-radius:8px; border:1px solid rgba(201,168,76,.2);
+    background:transparent; color:#8a8070; cursor:pointer; font-size:.78rem; font-weight:700;
+    letter-spacing:.04em; text-transform:uppercase; transition:all .2s;
+  }
+  .cd-toggle-btn.active { background:rgba(201,168,76,.15); color:#c9a84c; border-color:rgba(201,168,76,.4); }
+  .cd-toggle-btn:hover:not(.active) { border-color:rgba(201,168,76,.3); color:#c9a84c; }
 
-  .add-section { background:#f9f9f9; border:1px solid #e0e0e0; border-radius:14px; padding:1.5rem; margin-top:1.5rem; }
-  .field-group { display:flex; flex-direction:column; gap:.3rem; }
-  .field-group label { font-size:.78rem; color:#555; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
-  .field-group input, .field-group select { padding:.45rem .75rem; border:1px solid #ccc; border-radius:7px; font-size:.9rem; outline:none; transition:border-color .2s; }
-  .field-group input:focus, .field-group select:focus { border-color:#1a5c2a; }
-  .btn-green { background:#1a5c2a; color:#fff; border:none; border-radius:7px; padding:.5rem 1.3rem; cursor:pointer; font-size:.9rem; font-weight:600; transition:background .2s; }
-  .btn-green:hover { background:#145022; }
-  .back-link { display:inline-flex; align-items:center; gap:.4rem; color:#1a5c2a; text-decoration:none; font-weight:600; margin-bottom:1.25rem; font-size:.95rem; }
-  .back-link:hover { text-decoration:underline; }
-  .view-toggle { display:flex; gap:.5rem; margin-bottom:1.25rem; }
-  .toggle-btn { padding:.4rem 1rem; border-radius:7px; border:1px solid #ccc; background:#fff; cursor:pointer; font-size:.85rem; transition:all .2s; }
-  .toggle-btn.active { background:#1a5c2a; color:#fff; border-color:#1a5c2a; }
+  /* ── Hole gallery ── */
+  .cd-hole-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:1.25rem;
+  }
+  .cd-hole-card {
+    background:#111; border:1px solid rgba(201,168,76,.12); border-radius:16px; overflow:hidden;
+    box-shadow:0 4px 20px rgba(0,0,0,.5); animation:fadeInUp .4s ease both;
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .cd-hole-card:hover {
+    transform:translateY(-6px);
+    box-shadow:0 14px 40px rgba(0,0,0,.65), 0 0 24px rgba(201,168,76,.1);
+    border-color:rgba(201,168,76,.3);
+  }
+  .cd-hole-img-wrap { position:relative; height:165px; overflow:hidden; }
+  .cd-hole-img { width:100%; height:100%; object-fit:cover; filter:brightness(.8); transition:transform .45s ease, filter .3s; }
+  .cd-hole-card:hover .cd-hole-img { transform:scale(1.08); filter:brightness(.95); }
+  .cd-hole-num {
+    position:absolute; top:10px; left:10px;
+    background:rgba(0,0,0,.7); backdrop-filter:blur(6px);
+    color:#f0ece4; font-weight:800; font-size:1rem;
+    width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    border:2px solid rgba(201,168,76,.5);
+  }
+  .cd-par-tag {
+    position:absolute; top:10px; right:10px; padding:.22rem .65rem;
+    border-radius:20px; font-size:.72rem; font-weight:700;
+    backdrop-filter:blur(6px); border:1px solid;
+  }
+  .cd-hole-body { padding:.9rem 1rem 1rem; }
+  .cd-hole-stats { display:flex; justify-content:space-around; margin-bottom:.65rem; }
+  .cd-hstat { text-align:center; }
+  .cd-hstat-val { font-size:1.1rem; font-weight:800; color:#f0ece4; }
+  .cd-hstat-lbl { font-size:.68rem; color:#6a6058; text-transform:uppercase; letter-spacing:.05em; }
+  .cd-si-track { height:4px; background:rgba(201,168,76,.1); border-radius:2px; overflow:hidden; }
+  .cd-si-fill { height:100%; background:linear-gradient(90deg,#9a7830,#c9a84c); border-radius:2px; transition:width .7s ease; }
+  .cd-si-label { font-size:.68rem; color:#5a5448; margin-top:.3rem; text-align:right; }
+
+  /* ── Scorecard ── */
+  .cd-scorecard-wrap { overflow-x:auto; border-radius:14px; border:1px solid rgba(201,168,76,.12); }
+  .cd-scorecard { width:100%; border-collapse:collapse; min-width:560px; }
+  .cd-scorecard thead tr th {
+    background:#0e0e0e; color:#c9a84c; padding:.65rem 1rem;
+    font-size:.72rem; text-transform:uppercase; letter-spacing:.08em;
+    font-weight:700; border-bottom:1px solid rgba(201,168,76,.15); text-align:center;
+  }
+  .cd-scorecard tbody tr td { padding:.6rem 1rem; border-bottom:1px solid rgba(201,168,76,.06); text-align:center; font-size:.88rem; color:#c8c0b4; }
+  .cd-scorecard tbody tr:hover td { background:rgba(201,168,76,.04); }
+  .cd-scorecard tbody tr:last-child td { border-bottom:none; }
+  .cd-scorecard .sc-divider td { background:#0e0e0e; color:#c9a84c; font-weight:800; font-size:.8rem; letter-spacing:.06em; border-top:1px solid rgba(201,168,76,.2); border-bottom:1px solid rgba(201,168,76,.2); }
+  .cd-scorecard tfoot td { background:#0e0e0e; color:#c9a84c; font-weight:800; font-size:.85rem; padding:.75rem 1rem; text-align:center; letter-spacing:.04em; border-top:1px solid rgba(201,168,76,.25); }
+  .cd-diff-bar { height:6px; border-radius:3px; background:rgba(201,168,76,.1); overflow:hidden; min-width:60px; display:inline-block; vertical-align:middle; }
+  .cd-diff-fill { height:100%; background:linear-gradient(90deg,#9a7830,#c9a84c); border-radius:3px; }
+
+  /* ── Add hole panel ── */
+  .cd-add-panel {
+    background:#111; border:1px solid rgba(201,168,76,.18); border-radius:16px;
+    padding:1.5rem; margin-top:2rem; animation:fadeInUp .35s ease;
+  }
+  .cd-add-title { font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#c9a84c; margin:0 0 1rem; }
+  .cd-add-grid { display:flex; gap:.85rem; flex-wrap:wrap; align-items:flex-end; }
+  .cd-field { display:flex; flex-direction:column; gap:.3rem; }
+  .cd-field label { font-size:.68rem; font-weight:700; color:#8a8070; text-transform:uppercase; letter-spacing:.08em; }
+
+  .empty-holes { text-align:center; padding:3rem 1rem; color:#5a5448; }
+  .empty-holes p:first-child { font-size:2.5rem; margin:0 0 .4rem; animation:shimmer 2.5s infinite; }
 `;
 
 export default function CourseDetail() {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
-  const [holes, setHoles] = useState([]);
-  const [view, setView] = useState('gallery'); // 'gallery' | 'scorecard'
-  const [form, setForm] = useState({ holeNumber: '', par: 4, yardage: '', handicapIndex: '' });
-  const [error, setError] = useState('');
+  const [holes, setHoles]   = useState([]);
+  const [view, setView]     = useState('gallery');
+  const [form, setForm]     = useState({ holeNumber: '', par: 4, yardage: '', handicapIndex: '' });
+  const [error, setError]   = useState('');
 
   const load = () => {
     courseApi.getById(id).then(c => { setCourse(c); setHoles(c.holes || []); }).catch(console.error);
@@ -146,7 +197,11 @@ export default function CourseDetail() {
     } catch (err) { setError(err.response?.data?.error || 'Failed to add hole'); }
   };
 
-  if (!course) return <p style={{ padding: '2rem' }}>Loading…</p>;
+  if (!course) return (
+    <div style={{ background:'#080808', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', color:'#c9a84c', fontSize:'1rem', letterSpacing:'.1em' }}>
+      Loading…
+    </div>
+  );
 
   const totalPar   = holes.reduce((s, h) => s + (h.par || 0), 0);
   const totalYards = holes.reduce((s, h) => s + (h.yardage || 0), 0);
@@ -157,156 +212,213 @@ export default function CourseDetail() {
   const frontYds   = front.reduce((s, h) => s + (h.yardage || 0), 0);
   const backYds    = back.reduce((s, h) => s + (h.yardage || 0), 0);
   const imgSrc     = COURSE_IMAGES[course.name] || FALLBACK_HERO;
+  const holePhoto  = (hole) => HOLE_PHOTOS[(hole.holeNumber - 1) % HOLE_PHOTOS.length];
 
-  const holePhoto = (hole) => HOLE_PHOTOS[(hole.holeNumber - 1) % HOLE_PHOTOS.length];
+  const stats = [
+    { val: course.numberOfHoles,                    lbl: 'Holes' },
+    { val: course.courseRating ?? '—',               lbl: 'Course Rating' },
+    { val: course.slopeRating ?? '—',                lbl: 'Slope Rating' },
+    { val: holes.length > 0 ? totalPar : '—',        lbl: 'Par' },
+    { val: totalYards > 0 ? totalYards.toLocaleString() : '—', lbl: 'Total Yards' },
+    { val: holes.length,                             lbl: 'Holes Mapped' },
+  ];
+
+  const parBadge = (par) => {
+    const pc = PAR_COLOR[par] || PAR_COLOR[4];
+    return (
+      <span style={{ background: pc.bg, color: pc.text, border: `1px solid ${pc.border}`, padding: '.15rem .6rem', borderRadius: 20, fontWeight: 700, fontSize: '.78rem' }}>
+        {par}
+      </span>
+    );
+  };
 
   return (
-    <div style={{ maxWidth: 1060, margin: '0 auto' }}>
+    <div className="cd-page">
       <style>{css}</style>
-      <Link to="/courses" className="back-link">← All Courses</Link>
 
       {/* Hero */}
-      <div className="hero">
-        <img src={imgSrc} alt={course.name} onError={e => { e.target.src = FALLBACK_HERO; }} />
-        <div className="hero-overlay">
-          <h1 className="hero-title">{course.name}</h1>
-          <p className="hero-sub">📍 {course.location}</p>
+      <div className="cd-hero">
+        <img className="cd-hero-img" src={imgSrc} alt={course.name} onError={e => { e.target.src = FALLBACK_HERO; }} />
+        <div className="cd-hero-overlay">
+          <div className="cd-hero-inner">
+            <Link to="/courses" className="cd-back">← All Courses</Link>
+            <div className="cd-eyebrow">World-Class Golf</div>
+            <h1 className="cd-hero-title">{course.name}</h1>
+            <p className="cd-hero-loc">📍 {course.location}</p>
+          </div>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="stat-strip">
-        {[
-          { val: course.numberOfHoles,            lbl: 'Holes' },
-          { val: course.courseRating ?? '—',       lbl: 'Course Rating' },
-          { val: course.slopeRating ?? '—',        lbl: 'Slope Rating' },
-          { val: holes.length > 0 ? totalPar : '—', lbl: 'Par' },
-          { val: totalYards > 0 ? `${totalYards.toLocaleString()}` : '—', lbl: 'Yards' },
-          { val: holes.length,                     lbl: 'Holes Added' },
-        ].map((s, i) => (
-          <div key={s.lbl} className="stat-box" style={{ animationDelay: `${i * .07}s` }}>
-            <p className="stat-val">{s.val}</p>
-            <p className="stat-lbl">{s.lbl}</p>
+      {/* Stat strip */}
+      <div className="cd-stats">
+        {stats.map(s => (
+          <div key={s.lbl} className="cd-stat">
+            <p className="cd-stat-val">{s.val}</p>
+            <p className="cd-stat-lbl">{s.lbl}</p>
           </div>
         ))}
       </div>
 
-      {holes.length > 0 && (
-        <>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div className="section-title">Hole by Hole</div>
-            <div className="view-toggle">
-              <button className={`toggle-btn ${view === 'gallery' ? 'active' : ''}`} onClick={() => setView('gallery')}>🖼 Gallery</button>
-              <button className={`toggle-btn ${view === 'scorecard' ? 'active' : ''}`} onClick={() => setView('scorecard')}>📋 Scorecard</button>
-            </div>
-          </div>
+      {/* Body */}
+      <div className="cd-body">
 
-          {/* Gallery view */}
-          {view === 'gallery' && (
-            <div className="hole-grid">
-              {holes.map((h, i) => {
-                const pc = PAR_COLOR[h.par] || PAR_COLOR[4];
-                const siWidth = h.handicapIndex ? `${((19 - h.handicapIndex) / 18) * 100}%` : '0%';
-                return (
-                  <div key={h.id} className="hole-card" style={{ animationDelay: `${i * .04}s` }}>
-                    <div className="hole-card-img">
-                      <img src={holePhoto(h)} alt={`Hole ${h.holeNumber}`}
-                        onError={e => { e.target.src = HOLE_PHOTOS[0]; }} />
-                      <div className="hole-num-badge">{h.holeNumber}</div>
-                      <div className="par-tag" style={{ background: pc.bg, color: pc.text }}>{pc.label}</div>
-                    </div>
-                    <div className="hole-card-body">
-                      <div className="hole-stat-row">
-                        <div className="hole-stat">
-                          <div className="hole-stat-val">{h.yardage ? h.yardage.toLocaleString() : '—'}</div>
-                          <div className="hole-stat-lbl">Yards</div>
-                        </div>
-                        <div className="hole-stat">
-                          <div className="hole-stat-val">{h.par}</div>
-                          <div className="hole-stat-lbl">Par</div>
-                        </div>
-                        <div className="hole-stat">
-                          <div className="hole-stat-val">{h.handicapIndex ?? '—'}</div>
-                          <div className="hole-stat-lbl">Stroke Index</div>
-                        </div>
+        {holes.length > 0 ? (
+          <>
+            <div className="cd-section-head">
+              <div className="cd-section-title">Hole by Hole</div>
+              <div className="cd-toggle">
+                <button className={`cd-toggle-btn ${view === 'gallery' ? 'active' : ''}`} onClick={() => setView('gallery')}>🖼 Gallery</button>
+                <button className={`cd-toggle-btn ${view === 'scorecard' ? 'active' : ''}`} onClick={() => setView('scorecard')}>📋 Scorecard</button>
+              </div>
+            </div>
+
+            {/* Gallery */}
+            {view === 'gallery' && (
+              <div className="cd-hole-grid">
+                {holes.map((h, i) => {
+                  const pc = PAR_COLOR[h.par] || PAR_COLOR[4];
+                  const siWidth = h.handicapIndex ? `${((19 - h.handicapIndex) / 18) * 100}%` : '0%';
+                  return (
+                    <div key={h.id} className="cd-hole-card" style={{ animationDelay: `${i * .04}s` }}>
+                      <div className="cd-hole-img-wrap">
+                        <img className="cd-hole-img" src={holePhoto(h)} alt={`Hole ${h.holeNumber}`}
+                          onError={e => { e.target.src = HOLE_PHOTOS[0]; }} />
+                        <div className="cd-hole-num">{h.holeNumber}</div>
+                        <div className="cd-par-tag" style={{ background: pc.bg, color: pc.text, borderColor: pc.border }}>{pc.label}</div>
                       </div>
-                      {h.handicapIndex && (
-                        <>
-                          <div className="si-track"><div className="si-fill" style={{ width: siWidth }} /></div>
-                          <div className="si-label">
-                            {h.handicapIndex === 1 ? 'Hardest hole' : h.handicapIndex === 18 ? 'Easiest hole' : `Ranked ${h.handicapIndex} of 18`}
+                      <div className="cd-hole-body">
+                        <div className="cd-hole-stats">
+                          <div className="cd-hstat">
+                            <div className="cd-hstat-val">{h.yardage ? h.yardage.toLocaleString() : '—'}</div>
+                            <div className="cd-hstat-lbl">Yards</div>
                           </div>
-                        </>
-                      )}
+                          <div className="cd-hstat">
+                            <div className="cd-hstat-val">{h.par}</div>
+                            <div className="cd-hstat-lbl">Par</div>
+                          </div>
+                          <div className="cd-hstat">
+                            <div className="cd-hstat-val">{h.handicapIndex ?? '—'}</div>
+                            <div className="cd-hstat-lbl">SI</div>
+                          </div>
+                        </div>
+                        {h.handicapIndex && (
+                          <>
+                            <div className="cd-si-track"><div className="cd-si-fill" style={{ width: siWidth }} /></div>
+                            <div className="cd-si-label">
+                              {h.handicapIndex === 1 ? 'Hardest hole' : h.handicapIndex === 18 ? 'Easiest hole' : `Ranked ${h.handicapIndex} of 18`}
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
 
-          {/* Scorecard view */}
-          {view === 'scorecard' && (
-            <div className="scorecard-wrap">
-              <table className="scorecard">
-                <thead>
-                  <tr><th>Hole</th><th>Par</th><th>Yards</th><th>Stroke Index</th><th>Difficulty</th></tr>
-                </thead>
-                <tbody>
-                  {front.map(h => (
-                    <tr key={h.id}>
-                      <td style={{ fontWeight: 700 }}>{h.holeNumber}</td>
-                      <td><span style={{ background: (PAR_COLOR[h.par]||PAR_COLOR[4]).bg, color: (PAR_COLOR[h.par]||PAR_COLOR[4]).text, padding:'.15rem .55rem', borderRadius:12, fontWeight:700, fontSize:'.82rem' }}>{h.par}</span></td>
-                      <td>{h.yardage?.toLocaleString() ?? '—'}</td>
-                      <td>{h.handicapIndex ?? '—'}</td>
-                      <td><div style={{ height:8, borderRadius:4, background:'#e0e0e0', overflow:'hidden' }}><div style={{ height:'100%', width: h.handicapIndex ? `${((19-h.handicapIndex)/18)*100}%` : 0, background:'#1a5c2a', borderRadius:4 }} /></div></td>
+            {/* Scorecard */}
+            {view === 'scorecard' && (
+              <div className="cd-scorecard-wrap">
+                <table className="cd-scorecard">
+                  <thead>
+                    <tr>
+                      <th>Hole</th><th>Par</th><th>Yards</th><th>Stroke Index</th><th>Difficulty</th>
                     </tr>
-                  ))}
-                  {front.length === 9 && <tr className="divider"><td>OUT</td><td>{frontPar}</td><td>{frontYds.toLocaleString()}</td><td colSpan="2"></td></tr>}
-                  {back.map(h => (
-                    <tr key={h.id}>
-                      <td style={{ fontWeight: 700 }}>{h.holeNumber}</td>
-                      <td><span style={{ background: (PAR_COLOR[h.par]||PAR_COLOR[4]).bg, color: (PAR_COLOR[h.par]||PAR_COLOR[4]).text, padding:'.15rem .55rem', borderRadius:12, fontWeight:700, fontSize:'.82rem' }}>{h.par}</span></td>
-                      <td>{h.yardage?.toLocaleString() ?? '—'}</td>
-                      <td>{h.handicapIndex ?? '—'}</td>
-                      <td><div style={{ height:8, borderRadius:4, background:'#e0e0e0', overflow:'hidden' }}><div style={{ height:'100%', width: h.handicapIndex ? `${((19-h.handicapIndex)/18)*100}%` : 0, background:'#1a5c2a', borderRadius:4 }} /></div></td>
-                    </tr>
-                  ))}
-                  {back.length === 9 && <tr className="divider"><td>IN</td><td>{backPar}</td><td>{backYds.toLocaleString()}</td><td colSpan="2"></td></tr>}
-                </tbody>
-                {holes.length === 18 && (
-                  <tfoot>
-                    <tr><td>TOTAL</td><td>{totalPar}</td><td>{totalYards.toLocaleString()}</td><td colSpan="2"></td></tr>
-                  </tfoot>
-                )}
-              </table>
-            </div>
-          )}
-        </>
-      )}
+                  </thead>
+                  <tbody>
+                    {front.map(h => (
+                      <tr key={h.id}>
+                        <td style={{ fontWeight:800, color:'#f0ece4' }}>{h.holeNumber}</td>
+                        <td>{parBadge(h.par)}</td>
+                        <td>{h.yardage?.toLocaleString() ?? '—'}</td>
+                        <td>{h.handicapIndex ?? '—'}</td>
+                        <td>
+                          <div className="cd-diff-bar">
+                            <div className="cd-diff-fill" style={{ width: h.handicapIndex ? `${((19-h.handicapIndex)/18)*100}%` : 0 }} />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {front.length === 9 && (
+                      <tr className="sc-divider">
+                        <td>OUT</td><td>{frontPar}</td><td>{frontYds.toLocaleString()}</td><td colSpan="2"></td>
+                      </tr>
+                    )}
+                    {back.map(h => (
+                      <tr key={h.id}>
+                        <td style={{ fontWeight:800, color:'#f0ece4' }}>{h.holeNumber}</td>
+                        <td>{parBadge(h.par)}</td>
+                        <td>{h.yardage?.toLocaleString() ?? '—'}</td>
+                        <td>{h.handicapIndex ?? '—'}</td>
+                        <td>
+                          <div className="cd-diff-bar">
+                            <div className="cd-diff-fill" style={{ width: h.handicapIndex ? `${((19-h.handicapIndex)/18)*100}%` : 0 }} />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {back.length === 9 && (
+                      <tr className="sc-divider">
+                        <td>IN</td><td>{backPar}</td><td>{backYds.toLocaleString()}</td><td colSpan="2"></td>
+                      </tr>
+                    )}
+                  </tbody>
+                  {holes.length === 18 && (
+                    <tfoot>
+                      <tr><td>TOTAL</td><td>{totalPar}</td><td>{totalYards.toLocaleString()}</td><td colSpan="2"></td></tr>
+                    </tfoot>
+                  )}
+                </table>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="empty-holes">
+            <p>⛳</p>
+            <p style={{ color:'#8a8070' }}>No holes mapped yet. Add the first hole below.</p>
+          </div>
+        )}
 
-      {/* Add hole form */}
-      {holes.length < 18 && (
-        <div className="add-section">
-          <h3 style={{ margin: '0 0 1rem', color: '#1a5c2a' }}>Add Hole {holes.length + 1} of 18</h3>
-          <form onSubmit={handleAddHole} style={{ display:'flex', gap:'1rem', flexWrap:'wrap', alignItems:'flex-end' }}>
-            <div className="field-group"><label>Hole #</label>
-              <input type="number" required min="1" max="18" value={form.holeNumber} style={{ width:70 }}
-                onChange={e => setForm(f => ({ ...f, holeNumber: e.target.value }))} /></div>
-            <div className="field-group"><label>Par</label>
-              <select value={form.par} onChange={e => setForm(f => ({ ...f, par: e.target.value }))}>
-                {[3,4,5,6].map(p => <option key={p} value={p}>Par {p}</option>)}</select></div>
-            <div className="field-group"><label>Yardage</label>
-              <input type="number" placeholder="e.g. 420" min="50" max="700" value={form.yardage} style={{ width:90 }}
-                onChange={e => setForm(f => ({ ...f, yardage: e.target.value }))} /></div>
-            <div className="field-group"><label>Stroke Index</label>
-              <input type="number" placeholder="1–18" min="1" max="18" value={form.handicapIndex} style={{ width:80 }}
-                onChange={e => setForm(f => ({ ...f, handicapIndex: e.target.value }))} /></div>
-            <button type="submit" className="btn-green">Add Hole</button>
-          </form>
-          {error && <p style={{ color:'red', marginTop:'.5rem' }}>{error}</p>}
-        </div>
-      )}
+        {/* Add hole */}
+        {holes.length < 18 && (
+          <div className="cd-add-panel">
+            <p className="cd-add-title">Add Hole {holes.length + 1} of 18</p>
+            {error && <div style={{ marginBottom:'.85rem', background:'rgba(127,29,29,.35)', color:'#fca5a5', border:'1px solid rgba(252,165,165,.2)', borderRadius:9, padding:'.6rem .9rem', fontSize:'.85rem' }}>{error}</div>}
+            <form onSubmit={handleAddHole}>
+              <div className="cd-add-grid">
+                <div className="cd-field">
+                  <label>Hole #</label>
+                  <input className="dark-input" type="number" required min="1" max="18" placeholder="1–18"
+                    value={form.holeNumber} style={{ width:72 }}
+                    onChange={e => setForm(f => ({ ...f, holeNumber: e.target.value }))} />
+                </div>
+                <div className="cd-field">
+                  <label>Par</label>
+                  <select className="dark-select" value={form.par}
+                    onChange={e => setForm(f => ({ ...f, par: e.target.value }))}>
+                    {[3,4,5,6].map(p => <option key={p} value={p}>Par {p}</option>)}
+                  </select>
+                </div>
+                <div className="cd-field">
+                  <label>Yardage</label>
+                  <input className="dark-input" type="number" placeholder="e.g. 420" min="50" max="700"
+                    value={form.yardage} style={{ width:90 }}
+                    onChange={e => setForm(f => ({ ...f, yardage: e.target.value }))} />
+                </div>
+                <div className="cd-field">
+                  <label>Stroke Index</label>
+                  <input className="dark-input" type="number" placeholder="1–18" min="1" max="18"
+                    value={form.handicapIndex} style={{ width:80 }}
+                    onChange={e => setForm(f => ({ ...f, handicapIndex: e.target.value }))} />
+                </div>
+                <div style={{ alignSelf:'end' }}>
+                  <button type="submit" className="btn-gold">Add Hole</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
