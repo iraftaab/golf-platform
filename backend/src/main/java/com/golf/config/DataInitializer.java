@@ -25,6 +25,7 @@ public class DataInitializer implements ApplicationRunner {
     private final BookingRepository bookingRepository;
     private final RoundRepository roundRepository;
     private final HoleRepository holeRepository;
+    private final CoachRepository coachRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -133,8 +134,38 @@ public class DataInitializer implements ApplicationRunner {
             roundRepository.save(roryRound);
         }
 
-        log.info("Sample data seeded: {} players, {} courses, {} bookings",
-                playerRepository.count(), courseRepository.count(), bookingRepository.count());
+        // --- Coaches ---
+        if (coachRepository.count() == 0) {
+            coachRepository.saveAll(List.of(
+                coach("David Leadbetter", "Full Swing & Mechanics",
+                    "David is a world-renowned golf instructor with over 40 years of experience coaching Tour professionals. " +
+                    "He is credited with revamping the swings of Nick Faldo, Nick Price, Greg Norman, and many others. " +
+                    "His unique \"A Swing\" methodology has helped thousands of amateur golfers improve consistency and power.",
+                    "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=400&q=80",
+                    75.0, 130.0, "(813) 555-0101", "david@golfplatform.com", "Mon–Fri 8am–5pm"),
+                coach("Butch Harmon", "Short Game & Course Management",
+                    "Butch Harmon is a legendary instructor best known for his work with Tiger Woods during Tiger's dominant era. " +
+                    "He specialises in short game finesse, bunker play, and strategic course management. " +
+                    "Butch's patient, detail-oriented approach makes him ideal for golfers of all skill levels looking to shave strokes.",
+                    "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=400&q=80",
+                    80.0, 140.0, "(813) 555-0202", "butch@golfplatform.com", "Tue–Sat 7am–4pm"),
+                coach("Hank Haney", "Driver & Long Game",
+                    "Hank Haney has coached multiple PGA Tour winners and is renowned for his expertise in driver distance and long-iron play. " +
+                    "He employs a data-driven approach using launch monitors and video analysis to identify swing faults and unlock distance. " +
+                    "Hank's structured lesson plans deliver measurable improvement in just a few sessions.",
+                    "https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=400&q=80",
+                    65.0, 110.0, "(813) 555-0303", "hank@golfplatform.com", "Mon–Thu 9am–6pm"),
+                coach("Aimee Cho", "Beginner & Junior Programs",
+                    "Aimee is a certified PGA teaching professional specialising in beginner foundations and junior development. " +
+                    "Her encouraging, positive coaching style builds confidence alongside technique, covering grip, stance, alignment, and the mental side of golf. " +
+                    "She has produced several junior state champions and is passionate about growing the game.",
+                    "https://images.unsplash.com/photo-1580982324076-d95230549339?w=400&q=80",
+                    50.0, 90.0, "(813) 555-0404", "aimee@golfplatform.com", "Mon–Sat 8am–6pm")
+            ));
+        }
+
+        log.info("Sample data seeded: {} players, {} courses, {} bookings, {} coaches",
+                playerRepository.count(), courseRepository.count(), bookingRepository.count(), coachRepository.count());
     }
 
     private Course seedCourse(String name, String location, double rating, int slope, int[][] holeData) {
@@ -180,6 +211,15 @@ public class DataInitializer implements ApplicationRunner {
         p.setEmail(email); p.setHandicapIndex(handicap);
         p.setMembershipTier(tier); p.setMemberPin(hashedPin);
         return p;
+    }
+
+    private Coach coach(String name, String specialty, String bio, String photoUrl,
+                        double price30, double price60, String phone, String email, String availability) {
+        Coach c = new Coach();
+        c.setName(name); c.setSpecialty(specialty); c.setBio(bio);
+        c.setPhotoUrl(photoUrl); c.setPrice30min(price30); c.setPrice60min(price60);
+        c.setPhone(phone); c.setEmail(email); c.setAvailability(availability);
+        return c;
     }
 
     private Booking booking(Player player, Course course, LocalDate date, LocalTime tee, int numPlayers) {

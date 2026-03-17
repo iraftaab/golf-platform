@@ -24,6 +24,7 @@ export default function Navbar() {
       <NavLink to="/courses" style={linkStyle}>Courses</NavLink>
       <NavLink to="/bookings" style={linkStyle}>Bookings</NavLink>
       <NavLink to="/rounds" style={linkStyle}>Rounds</NavLink>
+      <NavLink to="/coaches" style={linkStyle}>Coaches</NavLink>
     </nav>
   );
 }

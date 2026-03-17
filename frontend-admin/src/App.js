@@ -16,6 +16,8 @@ import MemberBook from './member/MemberBook';
 import MemberBookings from './member/MemberBookings';
 import MemberRounds from './member/MemberRounds';
 import MemberProfile from './member/MemberProfile';
+import Coaches from './pages/Coaches';
+import CoachDetail from './pages/CoachDetail';
 
 function AppLayout() {
   const loc = useLocation();
@@ -34,6 +36,8 @@ function AppLayout() {
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/rounds" element={<Rounds />} />
           <Route path="/rounds/:id" element={<RoundDetail />} />
+          <Route path="/coaches" element={<Coaches />} />
+          <Route path="/coaches/:id" element={<CoachDetail />} />
           {/* Member portal */}
           <Route path="/member/login" element={<MemberLogin />} />
           <Route path="/member/home" element={<MemberHome />} />
