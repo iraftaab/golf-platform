@@ -8,11 +8,11 @@ export default function MemberAvatar({ member, size = 48, style = {} }) {
   const initials = `${member?.firstName?.[0] || ''}${member?.lastName?.[0] || ''}`.toUpperCase();
 
   const TIER_BG = {
-    GOLD:   '#f59e0b',
+    GOLD:   '#c9a84c',
     SILVER: '#9ca3af',
     BRONZE: '#b45309',
   };
-  const bg = TIER_BG[member?.membershipTier] || '#1a5c2a';
+  const bg = TIER_BG[member?.membershipTier] || '#c9a84c';
 
   const base = {
     width:  size,

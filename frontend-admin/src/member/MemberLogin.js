@@ -4,60 +4,72 @@ import axios from 'axios';
 import { useMember } from './MemberContext';
 
 const TIER_COLORS = {
-  GOLD:   { bg: 'linear-gradient(135deg,#f6d365,#fda085)', text: '#7c4a00', badge: '#f59e0b' },
-  SILVER: { bg: 'linear-gradient(135deg,#c9d6df,#e2ebf0)', text: '#374151', badge: '#9ca3af' },
-  BRONZE: { bg: 'linear-gradient(135deg,#cd7f32,#e8a96a)', text: '#5c2d0a', badge: '#b45309' },
+  GOLD:   { bg: 'rgba(201,168,76,.12)',  text: '#c9a84c', border: 'rgba(201,168,76,.25)'  },
+  SILVER: { bg: 'rgba(156,163,175,.1)',  text: '#d1d5db', border: 'rgba(156,163,175,.2)'  },
+  BRONZE: { bg: 'rgba(180,83,9,.12)',    text: '#d97706', border: 'rgba(180,83,9,.2)'      },
 };
 
 const css = `
   @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.3)} 50%{box-shadow:0 0 0 12px rgba(201,168,76,0)} }
   .login-wrap {
     min-height:100vh; display:flex; align-items:center; justify-content:center;
-    background: linear-gradient(160deg,#0d3320 0%,#1a5c2a 50%,#145022 100%);
+    background: #080808;
+    background-image: radial-gradient(ellipse at 30% 50%, rgba(201,168,76,.06) 0%, transparent 55%),
+                      radial-gradient(ellipse at 70% 20%, rgba(26,61,43,.4) 0%, transparent 50%);
     padding:1rem;
   }
   .login-card {
-    background:#fff; border-radius:20px; padding:2.5rem 2rem; width:100%; max-width:420px;
-    box-shadow:0 20px 60px rgba(0,0,0,.35); animation:fadeUp .45s ease;
+    background:#111; border:1px solid rgba(201,168,76,.2); border-radius:20px;
+    padding:2.75rem 2.25rem; width:100%; max-width:420px;
+    box-shadow:0 24px 80px rgba(0,0,0,.7), 0 0 40px rgba(201,168,76,.05);
+    animation:fadeUp .5s ease;
   }
-  .login-logo { text-align:center; margin-bottom:1.75rem; }
-  .login-logo span { font-size:3rem; }
-  .login-logo h1 { margin:.4rem 0 .1rem; font-size:1.6rem; color:#1a1a1a; font-weight:800; }
-  .login-logo p { color:#888; font-size:.9rem; margin:0; }
+  .login-logo { text-align:center; margin-bottom:2rem; }
+  .login-logo-icon {
+    width:64px; height:64px; border-radius:50%; margin:0 auto .75rem;
+    background:linear-gradient(135deg,#c9a84c,#9a7830);
+    display:flex; align-items:center; justify-content:center; font-size:1.75rem;
+    animation:pulse 3s infinite;
+  }
+  .login-logo h1 { margin:.25rem 0 .15rem; font-size:1.6rem; color:#f0ece4; font-weight:800; letter-spacing:-.02em; }
+  .login-logo p { color:#8a8070; font-size:.88rem; margin:0; }
   .field { margin-bottom:1.1rem; }
-  .field label { display:block; font-size:.8rem; font-weight:700; color:#555; text-transform:uppercase; letter-spacing:.05em; margin-bottom:.35rem; }
+  .field label { display:block; font-size:.72rem; font-weight:700; color:#8a8070; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.4rem; }
   .field input {
-    width:100%; padding:.65rem .9rem; border:1.5px solid #ddd; border-radius:9px;
-    font-size:1rem; outline:none; transition:border-color .2s, box-shadow .2s; box-sizing:border-box;
+    width:100%; padding:.7rem 1rem; background:#0e0e0e; border:1px solid rgba(201,168,76,.18);
+    border-radius:9px; font-size:.95rem; outline:none; color:#f0ece4; box-sizing:border-box;
+    transition:border-color .2s, box-shadow .2s;
   }
-  .field input:focus { border-color:#1a5c2a; box-shadow:0 0 0 3px rgba(26,92,42,.12); }
-  .pin-dots { display:flex; gap:.5rem; margin-top:.4rem; }
-  .pin-dot { width:12px; height:12px; border-radius:50%; background:#1a5c2a; opacity:.2; transition:opacity .2s; }
+  .field input:focus { border-color:#c9a84c; box-shadow:0 0 0 3px rgba(201,168,76,.12); }
+  .field input::placeholder { color:#5a5448; }
+  .pin-dots { display:flex; gap:.5rem; margin-top:.5rem; }
+  .pin-dot { width:10px; height:10px; border-radius:50%; background:#c9a84c; opacity:.15; transition:opacity .2s; }
   .pin-dot.filled { opacity:1; }
   .btn-login {
-    width:100%; padding:.8rem; background:#1a5c2a; color:#fff; border:none; border-radius:10px;
-    font-size:1rem; font-weight:700; cursor:pointer; transition:background .2s, transform .1s;
-    margin-top:.5rem;
+    width:100%; padding:.85rem; background:linear-gradient(135deg,#c9a84c,#9a7830);
+    color:#0a0a0a; border:none; border-radius:10px; font-size:.9rem; font-weight:800;
+    cursor:pointer; transition:opacity .2s, transform .1s; margin-top:.5rem;
+    letter-spacing:.06em; text-transform:uppercase;
   }
-  .btn-login:hover { background:#145022; }
+  .btn-login:hover { opacity:.88; }
   .btn-login:active { transform:scale(.98); }
-  .error-msg { background:#fee2e2; color:#b91c1c; padding:.65rem .9rem; border-radius:8px; font-size:.88rem; margin-bottom:1rem; text-align:center; }
-  .tier-preview { display:flex; gap:.75rem; margin-bottom:1.5rem; }
-  .tier-chip {
-    flex:1; padding:.6rem .4rem; border-radius:10px; text-align:center;
-    font-size:.75rem; font-weight:700; cursor:default;
-  }
-  .divider { display:flex; align-items:center; gap:.75rem; margin:1.25rem 0; color:#bbb; font-size:.82rem; }
-  .divider::before, .divider::after { content:''; flex:1; height:1px; background:#e5e7eb; }
+  .error-msg { background:rgba(127,29,29,.35); color:#fca5a5; border:1px solid rgba(252,165,165,.2); padding:.65rem 1rem; border-radius:8px; font-size:.85rem; margin-bottom:1rem; text-align:center; }
+  .tier-preview { display:flex; gap:.6rem; margin-bottom:1.75rem; }
+  .tier-chip { flex:1; padding:.55rem .4rem; border-radius:9px; text-align:center; font-size:.72rem; font-weight:700; }
+  .divider { display:flex; align-items:center; gap:.75rem; margin:1.4rem 0; color:#5a5448; font-size:.78rem; }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background:rgba(201,168,76,.12); }
+  .demo-creds { font-size:.78rem; color:#5a5448; line-height:1.8; text-align:center; }
+  .demo-creds strong { color:#8a8070; }
 `;
 
 export default function MemberLogin() {
-  const [email, setEmail]     = useState('');
-  const [pin, setPin]         = useState('');
+  const [email, setEmail] = useState('');
+  const [pin, setPin]     = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState('');
-  const { login }             = useMember();
-  const navigate              = useNavigate();
+  const [error, setError]   = useState('');
+  const { login } = useMember();
+  const navigate  = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault(); setError(''); setLoading(true);
@@ -75,15 +87,15 @@ export default function MemberLogin() {
       <style>{css}</style>
       <div className="login-card">
         <div className="login-logo">
-          <span>⛳</span>
+          <div className="login-logo-icon">⛳</div>
           <h1>Member Portal</h1>
           <p>Golf Platform · Members Only</p>
         </div>
 
-        {/* Tier preview chips */}
         <div className="tier-preview">
           {Object.entries(TIER_COLORS).map(([tier, c]) => (
-            <div key={tier} className="tier-chip" style={{ background: c.bg, color: c.text }}>
+            <div key={tier} className="tier-chip"
+              style={{ background: c.bg, color: c.text, border: `1px solid ${c.border}` }}>
               {tier === 'GOLD' ? '🥇' : tier === 'SILVER' ? '🥈' : '🥉'} {tier}
             </div>
           ))}
@@ -100,7 +112,7 @@ export default function MemberLogin() {
           <div className="field">
             <label>4-Digit PIN</label>
             <input type="password" required placeholder="••••" maxLength={4} pattern="\d{4}"
-              inputMode="numeric" value={pin} onChange={e => setPin(e.target.value.replace(/\D/g,''))} />
+              inputMode="numeric" value={pin} onChange={e => setPin(e.target.value.replace(/\D/g, ''))} />
             <div className="pin-dots">
               {[0,1,2,3].map(i => <div key={i} className={`pin-dot ${pin.length > i ? 'filled' : ''}`} />)}
             </div>
@@ -111,10 +123,10 @@ export default function MemberLogin() {
         </form>
 
         <div className="divider">demo credentials</div>
-        <div style={{ fontSize: '.8rem', color: '#888', lineHeight: 1.7, textAlign: 'center' }}>
-          🥇 tiger@golf.com · PIN 1234 &nbsp;|&nbsp; rory@golf.com · 1234<br/>
-          🥈 dustin@golf.com · PIN 5678<br/>
-          🥉 collin@golf.com · PIN 1234
+        <div className="demo-creds">
+          🥇 <strong>tiger@golf.com</strong> · PIN 1234 &nbsp;|&nbsp; <strong>rory@golf.com</strong> · 1234<br/>
+          🥈 <strong>dustin@golf.com</strong> · PIN 5678<br/>
+          🥉 <strong>collin@golf.com</strong> · PIN 1234
         </div>
       </div>
     </div>

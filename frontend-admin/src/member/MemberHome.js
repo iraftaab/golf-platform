@@ -4,75 +4,78 @@ import { useMember } from './MemberContext';
 import MemberAvatar from './MemberAvatar';
 
 const TIER_STYLES = {
-  GOLD:   { bg: 'linear-gradient(135deg,#f6d365 0%,#fda085 100%)', text: '#7c4a00', icon: '🥇', border: '#f59e0b' },
-  SILVER: { bg: 'linear-gradient(135deg,#c9d6df 0%,#e2ebf0 100%)', text: '#374151', icon: '🥈', border: '#9ca3af' },
-  BRONZE: { bg: 'linear-gradient(135deg,#cd7f32 0%,#e8a96a 100%)', text: '#5c2d0a', icon: '🥉', border: '#b45309' },
+  GOLD:   { bg: 'linear-gradient(135deg,#2a1f00,#1a1200)', accent: '#c9a84c', glow: 'rgba(201,168,76,.2)',  icon: '🥇', border: 'rgba(201,168,76,.35)' },
+  SILVER: { bg: 'linear-gradient(135deg,#1a1a1f,#111116)', accent: '#c8d0dc', glow: 'rgba(200,208,220,.1)', icon: '🥈', border: 'rgba(200,208,220,.2)'  },
+  BRONZE: { bg: 'linear-gradient(135deg,#1f1000,#140a00)', accent: '#d97706', glow: 'rgba(217,119,6,.18)',  icon: '🥉', border: 'rgba(217,119,6,.3)'    },
 };
 
 const TIER_BENEFITS = {
-  GOLD: [
-    { icon: '📅', text: 'Unlimited tee time bookings' },
-    { icon: '🌅', text: 'All-hours course access' },
-    { icon: '👥', text: 'Guest privileges included' },
-    { icon: '🛍️', text: 'Pro shop discount 20%' },
-    { icon: '🏆', text: 'Priority tournament entry' },
-  ],
-  SILVER: [
-    { icon: '📅', text: 'Up to 4 bookings per week' },
-    { icon: '🌅', text: 'Early morning access' },
-    { icon: '💰', text: 'Reduced green fees 10%' },
-    { icon: '📊', text: 'Advanced stats & analytics' },
-  ],
-  BRONZE: [
-    { icon: '📅', text: 'Up to 2 bookings per week' },
-    { icon: '⛳', text: 'Access to all courses' },
-    { icon: '📱', text: 'Mobile app access' },
-  ],
+  GOLD:   [{ icon:'📅', t:'Unlimited tee time bookings' },{ icon:'🌅', t:'All-hours course access' },{ icon:'👥', t:'Guest privileges included' },{ icon:'🛍️', t:'Pro shop discount 20%' }],
+  SILVER: [{ icon:'📅', t:'Up to 4 bookings/week' },{ icon:'🌅', t:'Early morning access' },{ icon:'💰', t:'Reduced green fees 10%' }],
+  BRONZE: [{ icon:'📅', t:'Up to 2 bookings/week' },{ icon:'⛳', t:'Access to all courses' },{ icon:'📱', t:'Mobile app access' }],
 };
 
 const css = `
   @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-  .member-wrap { min-height:100vh; background:#f4f7f4; }
-  .member-nav {
-    background:#1a5c2a; color:#fff; padding:.85rem 2rem;
-    display:flex; align-items:center; justify-content:space-between;
+  .mh-wrap { min-height:100vh; background:#080808; }
+  .mh-nav {
+    background:#0e0e0e; border-bottom:1px solid rgba(201,168,76,.18);
+    padding:0 2rem; height:60px; display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:100; backdrop-filter:blur(12px);
   }
-  .member-nav-brand { font-weight:800; font-size:1.1rem; display:flex; align-items:center; gap:.5rem; }
-  .member-nav-right { display:flex; align-items:center; gap:1.25rem; }
-  .nav-greeting { font-size:.9rem; opacity:.85; }
-  .btn-logout { background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.3); border-radius:7px; padding:.35rem .9rem; cursor:pointer; font-size:.85rem; transition:background .2s; }
-  .btn-logout:hover { background:rgba(255,255,255,.25); }
-  .member-content { max-width:920px; margin:0 auto; padding:2rem 1rem; }
+  .mh-brand { font-size:1rem; font-weight:800; color:#c9a84c; letter-spacing:.06em; text-transform:uppercase; }
+  .mh-nav-right { display:flex; align-items:center; gap:1rem; }
+  .mh-greeting { font-size:.85rem; color:#8a8070; }
+  .btn-signout {
+    background:transparent; color:#8a8070; border:1px solid rgba(201,168,76,.18);
+    border-radius:7px; padding:.35rem .9rem; cursor:pointer; font-size:.78rem;
+    font-weight:600; transition:color .2s, border-color .2s;
+  }
+  .btn-signout:hover { color:#c9a84c; border-color:rgba(201,168,76,.4); }
+  .mh-content { max-width:960px; margin:0 auto; padding:2rem 1.25rem; }
+
   .tier-card {
     border-radius:18px; padding:2rem; margin-bottom:2rem;
-    box-shadow:0 4px 24px rgba(0,0,0,.12); animation:fadeUp .4s ease;
+    box-shadow:0 8px 32px rgba(0,0,0,.6); animation:fadeUp .4s ease;
     position:relative; overflow:hidden;
   }
-  .tier-card-inner { position:relative; z-index:1; }
-  .tier-badge { font-size:3rem; margin-bottom:.5rem; }
-  .tier-name { font-size:1.8rem; font-weight:800; margin:0 0 .25rem; }
-  .tier-desc { font-size:.95rem; opacity:.8; margin:0 0 1.5rem; }
-  .tier-benefits { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.6rem; }
+  .tier-glow {
+    position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse at 80% 50%,var(--tier-glow) 0%,transparent 60%);
+  }
+  .tier-inner { position:relative; z-index:1; }
+  .tier-icon { font-size:2.75rem; margin-bottom:.5rem; display:block; }
+  .tier-name { font-size:1.75rem; font-weight:800; letter-spacing:-.02em; margin:0 0 .35rem; }
+  .tier-desc { font-size:.88rem; opacity:.75; margin:0 0 1.5rem; line-height:1.6; }
+  .tier-benefits { display:flex; flex-wrap:wrap; gap:.5rem; }
   .benefit-chip {
-    display:flex; align-items:center; gap:.5rem;
-    background:rgba(255,255,255,.3); backdrop-filter:blur(4px);
-    border-radius:8px; padding:.5rem .75rem; font-size:.85rem; font-weight:600;
+    display:flex; align-items:center; gap:.4rem;
+    background:rgba(255,255,255,.07); backdrop-filter:blur(6px);
+    border-radius:8px; padding:.4rem .8rem; font-size:.8rem; font-weight:600;
+    border:1px solid rgba(255,255,255,.1);
   }
-  .quick-actions { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:2rem; }
+
+  .section-head { font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#5a5448; margin:0 0 1rem; }
+  .actions-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:.85rem; margin-bottom:2rem; }
   .action-card {
-    background:#fff; border-radius:14px; padding:1.5rem; text-align:center;
-    box-shadow:0 2px 10px rgba(0,0,0,.07); cursor:pointer; text-decoration:none; color:#1a1a1a;
-    transition:transform .2s, box-shadow .2s; animation:fadeUp .4s ease both;
-    display:block;
+    background:#111; border:1px solid rgba(201,168,76,.15); border-radius:14px;
+    padding:1.35rem; text-align:center; text-decoration:none; color:#f0ece4;
+    transition:border-color .25s, transform .25s, box-shadow .25s;
+    animation:fadeUp .4s ease both; display:block;
   }
-  .action-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,.13); }
-  .action-icon { font-size:2.2rem; margin-bottom:.5rem; }
-  .action-title { font-weight:700; font-size:1rem; margin:0 0 .2rem; }
-  .action-sub { font-size:.8rem; color:#888; margin:0; }
-  .stats-row { display:flex; gap:1rem; flex-wrap:wrap; }
-  .stat-mini { flex:1; min-width:100px; background:#fff; border-radius:12px; padding:1rem; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.06); animation:fadeUp .5s ease both; }
-  .stat-mini-val { font-size:1.6rem; font-weight:800; color:#1a5c2a; }
-  .stat-mini-lbl { font-size:.75rem; color:#999; margin-top:.15rem; }
+  .action-card:hover { border-color:rgba(201,168,76,.4); transform:translateY(-4px); box-shadow:0 8px 28px rgba(0,0,0,.5),0 0 20px rgba(201,168,76,.1); }
+  .action-icon { font-size:2rem; margin-bottom:.5rem; }
+  .action-title { font-weight:700; font-size:.88rem; margin:0 0 .15rem; }
+  .action-sub { font-size:.75rem; color:#8a8070; margin:0; }
+
+  .stats-row { display:flex; gap:.85rem; flex-wrap:wrap; }
+  .stat-mini {
+    flex:1; min-width:110px; background:#111; border:1px solid rgba(201,168,76,.12);
+    border-radius:12px; padding:1.1rem; text-align:center;
+    animation:fadeUp .5s ease both;
+  }
+  .stat-mini-val { font-size:1.5rem; font-weight:800; color:#c9a84c; }
+  .stat-mini-lbl { font-size:.72rem; color:#8a8070; margin-top:.15rem; text-transform:uppercase; letter-spacing:.07em; }
 `;
 
 export default function MemberHome() {
@@ -84,92 +87,73 @@ export default function MemberHome() {
   const ts = TIER_STYLES[member.membershipTier] || TIER_STYLES.BRONZE;
   const benefits = TIER_BENEFITS[member.membershipTier] || TIER_BENEFITS.BRONZE;
 
-  return (
-    <div className="member-wrap">
-      <style>{css}</style>
+  const actions = [
+    { to:'/member/book',     icon:'📅', title:'Book Tee Time',   sub:'Reserve your next round'   },
+    { to:'/member/bookings', icon:'📋', title:'My Bookings',     sub:'View & manage reservations' },
+    { to:'/member/rounds',   icon:'🏌️', title:'My Rounds',       sub:'Round history & scores'    },
+    { to:'/member/coaches',  icon:'🏫', title:'Book a Coach',    sub:'Private lessons & clinics'  },
+    { to:'/courses',         icon:'⛳', title:'Browse Courses',  sub:'Explore available courses'  },
+    { to:'/member/profile',  icon:'⚙️', title:'My Profile',      sub:'Update info & change PIN'   },
+  ];
 
-      <nav className="member-nav">
-        <div className="member-nav-brand">⛳ Golf Platform</div>
-        <div className="member-nav-right">
-          <span className="nav-greeting">Welcome, {member.firstName}!</span>
-          <Link to="/member/profile" style={{ lineHeight: 0 }}>
-            <MemberAvatar member={member} size={36} style={{ border: '2px solid rgba(255,255,255,.6)', cursor: 'pointer' }} />
+  return (
+    <div className="mh-wrap">
+      <style>{css}</style>
+      <nav className="mh-nav">
+        <div className="mh-brand">⛳ Golf Platform</div>
+        <div className="mh-nav-right">
+          <span className="mh-greeting">Welcome, {member.firstName}</span>
+          <Link to="/member/profile">
+            <MemberAvatar member={member} size={34} style={{ border: '2px solid rgba(201,168,76,.5)', cursor:'pointer' }} />
           </Link>
-          <button className="btn-logout" onClick={() => { logout(); navigate('/member/login'); }}>Sign Out</button>
+          <button className="btn-signout" onClick={() => { logout(); navigate('/member/login'); }}>Sign Out</button>
         </div>
       </nav>
 
-      <div className="member-content">
-        {/* Membership tier card */}
-        <div className="tier-card" style={{ background: ts.bg, color: ts.text }}>
-          <div className="tier-card-inner">
-            <div className="tier-badge">{ts.icon}</div>
-            <h2 className="tier-name">{member.tierDisplayName} Member</h2>
-            <p className="tier-desc">{member.tierDescription}</p>
+      <div className="mh-content">
+        {/* Tier card */}
+        <div className="tier-card" style={{ background: ts.bg, border: `1px solid ${ts.border}`, '--tier-glow': ts.glow }}>
+          <div className="tier-glow" />
+          <div className="tier-inner">
+            <span className="tier-icon">{ts.icon}</span>
+            <h2 className="tier-name" style={{ color: ts.accent }}>{member.tierDisplayName} Member</h2>
+            <p className="tier-desc" style={{ color: ts.accent }}>{member.tierDescription}</p>
             <div className="tier-benefits">
               {benefits.map((b, i) => (
-                <div key={i} className="benefit-chip" style={{ color: ts.text }}>
-                  <span>{b.icon}</span> {b.text}
+                <div key={i} className="benefit-chip" style={{ color: ts.accent }}>
+                  <span>{b.icon}</span> {b.t}
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Quick actions */}
-        <h2 style={{ margin: '0 0 1rem', color: '#1a1a1a' }}>Quick Actions</h2>
-        <div className="quick-actions">
-          <Link to="/member/book" className="action-card" style={{ animationDelay: '.05s' }}>
-            <div className="action-icon">📅</div>
-            <p className="action-title">Book a Tee Time</p>
-            <p className="action-sub">Reserve your next round</p>
-          </Link>
-          <Link to="/member/bookings" className="action-card" style={{ animationDelay: '.1s' }}>
-            <div className="action-icon">📋</div>
-            <p className="action-title">My Bookings</p>
-            <p className="action-sub">View & manage reservations</p>
-          </Link>
-          <Link to="/member/rounds" className="action-card" style={{ animationDelay: '.15s' }}>
-            <div className="action-icon">🏌️</div>
-            <p className="action-title">My Rounds</p>
-            <p className="action-sub">Round history & scores</p>
-          </Link>
-          <Link to="/courses" className="action-card" style={{ animationDelay: '.2s' }}>
-            <div className="action-icon">⛳</div>
-            <p className="action-title">Browse Courses</p>
-            <p className="action-sub">Explore available courses</p>
-          </Link>
-          <Link to="/member/coaches" className="action-card" style={{ animationDelay: '.25s' }}>
-            <div className="action-icon">🏫</div>
-            <p className="action-title">Book a Coach</p>
-            <p className="action-sub">Private lessons & clinics</p>
-          </Link>
-          <Link to="/member/profile" className="action-card" style={{ animationDelay: '.3s' }}>
-            <div className="action-icon">⚙️</div>
-            <p className="action-title">My Profile</p>
-            <p className="action-sub">Update info & change PIN</p>
-          </Link>
+        {/* Actions */}
+        <p className="section-head">Quick Actions</p>
+        <div className="actions-grid">
+          {actions.map((a, i) => (
+            <Link key={a.to} to={a.to} className="action-card" style={{ animationDelay: `${i*.06}s` }}>
+              <div className="action-icon">{a.icon}</div>
+              <p className="action-title">{a.title}</p>
+              <p className="action-sub">{a.sub}</p>
+            </Link>
+          ))}
         </div>
 
-        {/* Member stats */}
-        <h2 style={{ margin: '0 0 1rem', color: '#1a1a1a' }}>Your Profile</h2>
+        {/* Stats */}
+        <p className="section-head">Your Profile</p>
         <div className="stats-row">
-          <div className="stat-mini" style={{ animationDelay: '.1s' }}>
-            <div className="stat-mini-val">{member.handicapIndex !== '' ? member.handicapIndex : '—'}</div>
-            <div className="stat-mini-lbl">Handicap</div>
-          </div>
-          <div className="stat-mini" style={{ animationDelay: '.15s' }}>
-            <div className="stat-mini-val">{member.maxBookingsPerWeek}</div>
-            <div className="stat-mini-lbl">Bookings/Week</div>
-          </div>
-          <div className="stat-mini" style={{ animationDelay: '.2s' }}>
-            <div className="stat-mini-val">{member.guestPrivileges ? '✓' : '—'}</div>
-            <div className="stat-mini-lbl">Guest Privileges</div>
-          </div>
-          <div className="stat-mini" style={{ animationDelay: '.25s' }}>
-            <div className="stat-mini-val" style={{ fontSize: '1rem' }}>{member.email}</div>
-            <div className="stat-mini-lbl">Email</div>
-          </div>
+          {[
+            { val: member.handicapIndex !== '' ? member.handicapIndex : '—', lbl: 'Handicap' },
+            { val: member.maxBookingsPerWeek,  lbl: 'Bookings/Week' },
+            { val: member.guestPrivileges ? '✓' : '—', lbl: 'Guest Pass' },
+            { val: member.email, lbl: 'Email', small: true },
+          ].map((s, i) => (
+            <div key={s.lbl} className="stat-mini" style={{ animationDelay: `${.1+i*.06}s` }}>
+              <div className="stat-mini-val" style={s.small ? { fontSize: '.78rem', wordBreak: 'break-all' } : {}}>{s.val}</div>
+              <div className="stat-mini-lbl">{s.lbl}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

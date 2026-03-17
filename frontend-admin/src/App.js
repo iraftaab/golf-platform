@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import './theme.css';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Players from './pages/Players';
@@ -25,7 +26,7 @@ function AppLayout() {
   return (
     <>
       {!isMember && <Navbar />}
-      <main style={isMember ? {} : { padding: '1rem' }}>
+      <main style={isMember ? {} : { background: 'var(--bg)', minHeight: '100vh' }}>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
