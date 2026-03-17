@@ -27,6 +27,13 @@ export const bookingApi = {
   delete: (id) => api.delete(`/bookings/${id}`),
 };
 
+export const coachApi = {
+  getAll: () => api.get('/coaches').then(r => r.data),
+  getById: (id) => api.get(`/coaches/${id}`).then(r => r.data),
+  create: (data) => api.post('/coaches', data).then(r => r.data),
+  update: (id, data) => api.put(`/coaches/${id}`, data).then(r => r.data),
+};
+
 export const roundApi = {
   getByPlayer: (playerId) => api.get(`/players/${playerId}/rounds`).then(r => r.data),
   getById: (id) => api.get(`/rounds/${id}`).then(r => r.data),

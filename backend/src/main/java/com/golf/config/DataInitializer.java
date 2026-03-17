@@ -52,7 +52,12 @@ public class DataInitializer implements ApplicationRunner {
             player("Jon",     "Rahm",     "jon@golf.com",     0.0,  MembershipTier.SILVER, pin9999),
             player("Justin",  "Thomas",   "jt@golf.com",      0.2,  MembershipTier.BRONZE, pin9999),
             player("Collin",  "Morikawa", "collin@golf.com",  0.1,  MembershipTier.BRONZE, pin1234),
-            player("Scottie", "Scheffler","scottie@golf.com", 0.0,  MembershipTier.BRONZE, pin1234)
+            player("Scottie", "Scheffler","scottie@golf.com", 0.0,  MembershipTier.BRONZE, pin1234),
+            player("Xander",  "Schauffele","xander@golf.com", 0.3,  MembershipTier.GOLD,   pin1234),
+            player("Patrick", "Cantlay",  "cantlay@golf.com", 0.5,  MembershipTier.SILVER, pin5678),
+            player("Viktor",  "Hovland",  "viktor@golf.com",  0.2,  MembershipTier.SILVER, pin9999),
+            player("Sam",     "Burns",    "sam@golf.com",     2.1,  MembershipTier.BRONZE, pin1234),
+            player("Max",     "Homa",     "max@golf.com",     1.8,  MembershipTier.BRONZE, pin5678)
         ));
 
         // --- Courses ---
@@ -155,6 +160,12 @@ public class DataInitializer implements ApplicationRunner {
                     "Hank's structured lesson plans deliver measurable improvement in just a few sessions.",
                     "https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?w=400&q=80",
                     65.0, 110.0, "(813) 555-0303", "hank@golfplatform.com", "Mon–Thu 9am–6pm"),
+                coach("Sean Foley", "Mental Game & Strategy",
+                    "Sean Foley is renowned for blending modern biomechanics with sports psychology to unlock each player's potential. " +
+                    "He has worked with Hunter Mahan, Sean O'Hair, and guided Tiger Woods to multiple wins. " +
+                    "His sessions focus on building a pressure-proof mental framework alongside technical precision.",
+                    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80",
+                    70.0, 120.0, "(813) 555-0505", "sean@golfplatform.com", "Wed–Sun 8am–5pm"),
                 coach("Aimee Cho", "Beginner & Junior Programs",
                     "Aimee is a certified PGA teaching professional specialising in beginner foundations and junior development. " +
                     "Her encouraging, positive coaching style builds confidence alongside technique, covering grip, stance, alignment, and the mental side of golf. " +
